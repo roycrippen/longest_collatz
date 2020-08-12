@@ -41,20 +41,15 @@ fn run<F: FnOnce(usize) -> (usize, u32)>(name: &str, f: F, limit: usize, debug: 
 }
 
 pub fn p014_brute(limit: usize) -> (usize, u32) {
-    if limit < 2 {
+    if limit < 3 {
         return (1, 1);
     }
 
-    let mut max_length = 1;
-    let mut answer = 1;
-    for i in 3..limit {
-        let val = get_collatz(i);
-        if val > max_length {
-            max_length = val;
-            answer = i;
-        }
-    }
-    (answer as usize, max_length)
+    (2..limit)
+        .into_iter()
+        .map(|x| (x, get_collatz(x)))
+        .max_by(|(_, a), (_, b)| a.cmp(b))
+        .unwrap()
 }
 
 pub fn p014_vect(limit: usize) -> (usize, u32) {
@@ -131,9 +126,6 @@ pub fn p014_parallel(limit: usize) -> (usize, u32) {
 }
 
 pub fn get_collatz(val: usize) -> u32 {
-    if val < 3 {
-        return 1;
-    }
     let mut n = val;
     let mut cnt: u32 = 1;
     while n != 1 {
